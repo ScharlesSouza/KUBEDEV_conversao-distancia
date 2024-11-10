@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment #criação do deploy kubernetes
+metadata:
+ name: conversao-distancia
+spec:
+  replicas: 3
+  selector: 
+    matchLabels:
+      app: conversao-distancia
+  template:
+    metadata:
+      labels:
+        app: conversao-distancia
+    spec:
+      containers:
+      - name: conversao-distancia
+        image: scharlessouza/conversao-distancia:v2
+        ports:
+          - containerPort: 5000 #porta definida na imagem do container (Dockerfile)
+---
+apiVersion: v1
+kind: Service #disponibilização de serviços do cluster kubernetes
+metadata:
+  name: conversao-distancia
+spec:
+  selector:
+    app: conversao-distancia
+  ports:
+  - port: 80
+    targetPort: 5000
+    nodePort: 30000 #k3d cluster create meucluster --servers 1 --agents 2 -p "8080:30000@loadbalancer
+  type: NodePort
